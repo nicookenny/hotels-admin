@@ -1,0 +1,76 @@
+# @format
+
+type Location {
+  city: String
+  country: String
+  address: String
+  zip_code: String
+}
+
+input LocationInput {
+  city: String
+  country: String
+  address: String
+  zip_code: String
+}
+
+type Company {
+  name: String
+  tax_number: String
+  location: Location
+  owner: Owner
+  franchises: [Franchise]
+}
+
+type Contact {
+  email: String
+  phone: String
+  location: Location
+}
+
+input ContactInput {
+  email: String!
+  phone: String!
+  location: LocationInput!
+}
+
+type Owner {
+  first_name: String
+  last_name: String
+  contact: Contact
+}
+
+input OwnerInput {
+  first_name: String!
+  last_name: String!
+  contact: ContactInput!
+}
+
+type Franchise {
+  name: String
+  url: String
+  logo_url: String
+
+  location: Location
+}
+
+input FranchiseInput {
+  name: String!
+  url: String!
+
+  location: LocationInput!
+}
+
+type Query {
+  getCompanies: [Company]
+}
+
+type Mutation {
+  createCompany(company: CreateCompanyInput!): Company
+}
+
+input CreateCompanyInput {
+  name: String!
+  tax_number: String!
+  location: LocationInput!
+}
