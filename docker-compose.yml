@@ -1,0 +1,29 @@
+services:
+  # Servicio para la base de datos PostgreSQL
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: '${PG_PASSWORD}'
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+
+  # Servicio para la aplicación Node.js
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-app-container
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: CLUBHUB
+      DB_PASSWORD: '${PG_PASSWORD}'
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: CLUBHUB
+      DATABASE_URL: postgres://${DB_USER}:${PG_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}

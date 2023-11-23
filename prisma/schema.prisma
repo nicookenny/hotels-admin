@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model zipCode {
+  code      String     @unique
+  locations Location[]
+}
+
+model Country {
+  name String @unique
+
+  cities City[]
+
+  locations Location[]
+}
+
+model City {
+  id String @id @default(cuid())
+
+  country      Country @relation(fields: [country_name], references: [name])
+  country_name String
+
+  name      String
+  locations Location[]
+}
+
+model Location {
+  id String @id @default(cuid())
+
+  city_id String
+  city    City   @relation(fields: [city_id], references: [id])
+
+  country    Country @relation(fields: [country_id], references: [name])
+  country_id String
+
+  zipCode_id String
+  zip_code   zipCode @relation(fields: [zipCode_id], references: [code])
+
+  companies Company[]
+  Contact   Contact[]
+}
+
+model Company {
+  id         String @id @default(cuid())
+  name       String
+  tax_number String
+
+  location    Location @relation(fields: [location_id], references: [id])
+  location_id String
+
+  owner    Owner  @relation(fields: [owner_id], references: [id])
+  owner_id String
+
+  franchises Franchise[]
+}
+
+model Contact {
+  id    String @id @default(cuid())
+  email String
+  phone String
+
+  owner    Owner  @relation(fields: [owner_id], references: [id])
+  owner_id String @unique
+
+  location    Location @relation(fields: [location_id], references: [id])
+  location_id String
+}
+
+model Owner {
+  id         String @id @default(cuid())
+  first_name String
+  last_name  String
+
+  contact Contact?
+
+  companies Company[]
+}
+
+model Franchise {
+  id       String @id @default(cuid())
+  name     String
+  url      String
+  logo_url String
+
+  company    Company? @relation(fields: [company_id], references: [id])
+  company_id String?
+}
